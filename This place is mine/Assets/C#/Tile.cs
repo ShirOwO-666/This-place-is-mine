@@ -7,10 +7,9 @@ public class Tile : MonoBehaviour
     public Color baseColor, offsetColor;
     public SpriteRenderer colorTile;
     public GameObject heightLight;
-
-    public void Init(bool isOffset)
+    private void Update()
     {
-       colorTile.color = isOffset ? offsetColor : baseColor; 
+        
     }
     public void OnMouseEnter()
     {
@@ -19,5 +18,20 @@ public class Tile : MonoBehaviour
     public void OnMouseExit()
     {
         heightLight.SetActive(false);
+    }
+    public void Init(bool isOffset)
+    {
+        colorTile.color = isOffset ? offsetColor : baseColor;
+    }
+    private void OnMouseDown()
+    {
+        SetPiece();
+    }
+    public void SetPiece()
+    {
+        if (Input.GetMouseButtonDown(1))
+        { 
+      
+        }
     }
 }
