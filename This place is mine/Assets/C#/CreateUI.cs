@@ -6,24 +6,33 @@ public class CreateUI : MonoBehaviour
 {
  public enum Type
     {
-        CreatePiece,Help,Cancel
+        CreateUI,CreatePiece,Help,Cancel
     }
     public Type type;
+    public Collider2D ThisCollider;
     private void Update()
     {
-       if(Input.GetMouseButtonDown(0))
-        switch (type)
+        Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        if (ThisCollider.OverlapPoint(mousePos))
         {
-            case Type.CreatePiece:
-                CreatePiece(); 
-                break;
-            case Type.Help:
-                Help(); 
-                break;
-            case Type.Cancel: 
-                Cancel(); 
-                break;
+            if (Input.GetMouseButtonDown(0))
+                switch (type)
+                {
+                    case Type.CreatePiece:
+                        CreatePiece();
+                        break;
+                    case Type.Help:
+                        Help();
+                        break;
+                    case Type.Cancel:
+                        Cancel();
+                        break;
+                }
         }
+    }
+    public void SetCreateUI()
+    {
+
     }
     public void CreatePiece()
     {

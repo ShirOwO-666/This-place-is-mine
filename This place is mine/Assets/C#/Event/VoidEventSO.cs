@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-[CreateAssetMenu(menuName = "Event/VoidSO")]
-public class VoidSO : ScriptableObject
+[CreateAssetMenu(menuName = "Event/VoidEventSO")]
+public class VoidEventSO : ScriptableObject
 {
     public UnityAction OnEvent;
 

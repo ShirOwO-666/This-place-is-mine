@@ -27,12 +27,12 @@ public class HexGrid2D : MonoBehaviour
                 tile.Init(isOffset);
             }
         }
-       cameraPos.position=new Vector3(width/2-0.5f+transform.position.x, height/2 + transform.position.y, -10f);
+       cameraPos.position=new Vector3((width*Mathf.Sqrt(3) / 2 )/ 2+transform.position.x, height/2 + transform.position.y, -10f);
 
     }
     public Vector3 GetPosition(int x,int y)
     {
         return
-            new Vector3(x, 0, 0) * size + new Vector3(0, y, 0) * size * 0.75f + ((y % 2) == 1 ? new Vector3(1, 0, 0) * size * 0.5f : Vector3.zero)+ this.transform.position; 
+            new Vector3(x, 0, 0) * size* Mathf.Sqrt(3)/2 + new Vector3(0, y, 0) * size * 0.75f + ((y % 2) == 1 ? new Vector3(1, 0, 0) * size * Mathf.Sqrt(3) / 2 * 0.5f : Vector3.zero)+ this.transform.position; 
     }
 }

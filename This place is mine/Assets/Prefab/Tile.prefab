@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.13, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 88381621955330995}
@@ -99,10 +99,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85d46a1302f8a4241a0991e0458d1f1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  colorTile: {fileID: 8037533857475329005}
+  TileCollider: {fileID: 0}
+  heightLight: {fileID: 3704668687641382705}
   baseColor: {r: 0.6839622, g: 0.852134, b: 1, a: 1}
   offsetColor: {r: 0.12041651, g: 0.2897968, b: 0.6226415, a: 1}
-  colorTile: {fileID: 8037533857475329005}
-  heightLight: {fileID: 3704668687641382705}
+  CreateUIEvent: {fileID: 11400000, guid: 8ecb382b04b4af6408b1b4923b572f4b, type: 2}
 --- !u!60 &2592701357339400502
 PolygonCollider2D:
   m_ObjectHideFlags: 0
