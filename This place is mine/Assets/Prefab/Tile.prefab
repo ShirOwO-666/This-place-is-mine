@@ -103,7 +103,6 @@ MonoBehaviour:
   offsetColor: {r: 0.12041651, g: 0.2897968, b: 0.6226415, a: 1}
   colorTile: {fileID: 8037533857475329005}
   heightLight: {fileID: 3704668687641382705}
-  CreateUi: {fileID: 0}
 --- !u!60 &2592701357339400502
 PolygonCollider2D:
   m_ObjectHideFlags: 0
