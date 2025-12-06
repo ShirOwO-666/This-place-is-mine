@@ -105,6 +105,8 @@ MonoBehaviour:
   baseColor: {r: 0.6839622, g: 0.852134, b: 1, a: 1}
   offsetColor: {r: 0.12041651, g: 0.2897968, b: 0.6226415, a: 1}
   CreateUIEvent: {fileID: 11400000, guid: 8ecb382b04b4af6408b1b4923b572f4b, type: 2}
+  isCreatePieceUIEvent: {fileID: 11400000, guid: 490fce0ae8eea1945ba78ce42cae1d92, type: 2}
+  OffCreatePieceUIEvent: {fileID: 11400000, guid: f8c2f5ecdeddd294aa6f4ee6215ca0e6, type: 2}
 --- !u!60 &2592701357339400502
 PolygonCollider2D:
   m_ObjectHideFlags: 0

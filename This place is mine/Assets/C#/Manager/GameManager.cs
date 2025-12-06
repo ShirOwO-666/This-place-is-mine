@@ -7,13 +7,14 @@ public class GameManager : MonoSingleton<GameManager>
 {
     private Vector2 mousePos;
     private bool isCreateUI=false;
-    [Header("创建UI")]
+    [Header("部署UI")]
     public GameObject CreateUI;
+    public GameObject CreatePieceUI;
     public GameObject CreatePiece;
     public GameObject Help;
     public GameObject Cancel;
 
-    [Header("UI参数")]
+    [Header("部署UI参数")]
     public float HelpMaxAngle;//旋转最大值
     public float CancelMaxAngle;
     public float speed;//旋转速度
@@ -24,13 +25,19 @@ public class GameManager : MonoSingleton<GameManager>
 
     [Header("事件监听")]
     public TileEventSO CreateUIEvent;
+    public VoidEventSO OffCreateUIEvent;
+    public VoidEventSO OnCreatePieceUIEvent;
     private void OnEnable()
     {
         CreateUIEvent.OnEvent += OnCreateUI;
+        OffCreateUIEvent.OnEvent += OffCreateUI;
+        OnCreatePieceUIEvent.OnEvent += OnCreatePieceUI;
     }
     private void OnDisable()
     {
         CreateUIEvent.OnEvent -= OnCreateUI;
+        OffCreateUIEvent.OnEvent -= OffCreateUI;
+        OnCreatePieceUIEvent.OnEvent -= OnCreatePieceUI;
     }
     private void Start()
     {
@@ -58,6 +65,12 @@ public class GameManager : MonoSingleton<GameManager>
         CreateUI.transform.localPosition = Center+new Vector3(0,radius,0);
         isCreateUI = true;
     }
+    public void OffCreateUI()
+    {
+        CreatePiece.SetActive(false);
+        Help.SetActive(false);
+        Cancel.SetActive(false);
+    }
     public void SetCreateUI()
     {
      float x1= Help.transform.position.x;
@@ -79,5 +92,13 @@ public class GameManager : MonoSingleton<GameManager>
         }
         Help.transform.position = new Vector3(x1, y1);
         Cancel.transform.position = new Vector3(x2, y2);
+    }
+    public void OnCreatePieceUI()
+    {
+        CreatePieceUI.SetActive(true);
+    }
+    public void OnDestroyCreatePieceUI() 
+    {
+        CreatePieceUI.SetActive(false);
     }
 }

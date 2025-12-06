@@ -6,10 +6,17 @@ public class CreateUI : MonoBehaviour
 {
  public enum Type
     {
-        CreateUI,CreatePiece,Help,Cancel
+    CreatePiece,Help,Cancel
     }
     public Type type;
-    public Collider2D ThisCollider;
+    private Collider2D ThisCollider;
+    [Header("ÊÂ¼þ¹ã²¥")]
+    public VoidEventSO OffCreateUIEvent;
+    public VoidEventSO OnCreatePieceUIEvent;
+    private void Awake()
+    {
+        ThisCollider = GetComponent<Collider2D>();
+    }
     private void Update()
     {
         Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -30,13 +37,9 @@ public class CreateUI : MonoBehaviour
                 }
         }
     }
-    public void SetCreateUI()
-    {
-
-    }
     public void CreatePiece()
     {
-
+        OnCreatePieceUIEvent.RaiseEvent();
     }
     public void Help()
     {
@@ -44,6 +47,6 @@ public class CreateUI : MonoBehaviour
     }
     public void Cancel() 
     {
-        
+        OffCreateUIEvent.RaiseEvent();
     }
 }

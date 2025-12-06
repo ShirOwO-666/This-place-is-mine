@@ -21,8 +21,8 @@ public class HexGrid2D : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                var Tilemap = Instantiate(tile, GetPosition(x,y), Quaternion.identity);
-                Tilemap.name = $"Tile{x}{y}";
+                var TileMap = Instantiate(tile, GetPosition(x,y), Quaternion.identity);
+                TileMap.name = $"Tile{x}{y}";
                 bool isOffset = (x % 2 == 0 && y % 2 != 0) || (x % 2 != 0 && y % 2 == 0);
                 tile.Init(isOffset);
             }
