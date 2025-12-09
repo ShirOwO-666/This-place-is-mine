@@ -29,7 +29,7 @@ public class HexGrid2D : MonoBehaviour
                 tile.Init(isOffset);
             }
         }
-       cameraPos.position=new Vector3( (width* size * Mathf.Sqrt(3) / 2 )/ 2+transform.position.x, size * height /2 + transform.position.y, -10f);
+       cameraPos.position=new Vector3( ((width-0.5f)* size * Mathf.Sqrt(3) / 2 )/ 2+transform.position.x, size * 0.75f * height /2 + transform.position.y, -10f);
 
     }
     public Vector3 GetPosition(int x,int y)
