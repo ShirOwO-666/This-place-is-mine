@@ -1,12 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : MonoSingleton<GameManager>
 {
-    private Vector2 mousePos;
-    private bool isCreateUI=false;
+    [Header("声明")]
+    public float TileSize;
+    [Header("方块数组")]
+    public List<Tile> tiles;
+    [Header("部署棋子")]
+    public GameObject piece;
     [Header("部署UI")]
     public GameObject CreateUI;
     public GameObject CreatePieceUI;
@@ -25,18 +31,15 @@ public class GameManager : MonoSingleton<GameManager>
 
     [Header("事件监听")]
     public TileEventSO CreateUIEvent;
-    public VoidEventSO OffCreateUIEvent;
     public VoidEventSO OnCreatePieceUIEvent;
     private void OnEnable()
     {
         CreateUIEvent.OnEvent += OnCreateUI;
-        OffCreateUIEvent.OnEvent += OffCreateUI;
         OnCreatePieceUIEvent.OnEvent += OnCreatePieceUI;
     }
     private void OnDisable()
     {
         CreateUIEvent.OnEvent -= OnCreateUI;
-        OffCreateUIEvent.OnEvent -= OffCreateUI;
         OnCreatePieceUIEvent.OnEvent -= OnCreatePieceUI;
     }
     private void Start()
@@ -44,14 +47,21 @@ public class GameManager : MonoSingleton<GameManager>
         Center=CreateUI.transform.position-new Vector3(0,radius,0);
         HelpMaxAngle = (HelpMaxAngle * Mathf.PI) / 180;
         CancelMaxAngle = (CancelMaxAngle * Mathf.PI) / 180;
+        
     }
     private void Update()
-    {
-        mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        if (isCreateUI)
-        {
+    {     
             SetCreateUI();
-        }
+    }
+    //事件监听
+    #region
+    public void OnCreatePieceUI()
+    {
+        CreatePieceUI.SetActive(true);
+    }
+    public void OnDestroyCreatePieceUI()
+    {
+        CreatePieceUI.SetActive(false);
     }
     public void OnCreateUI(Tile tile)
     {
@@ -63,7 +73,6 @@ public class GameManager : MonoSingleton<GameManager>
         Cancel.SetActive(true);
         Center = tile.transform.position;
         CreateUI.transform.localPosition = Center+new Vector3(0,radius,0);
-        isCreateUI = true;
     }
     public void OffCreateUI()
     {
@@ -71,6 +80,7 @@ public class GameManager : MonoSingleton<GameManager>
         Help.SetActive(false);
         Cancel.SetActive(false);
     }
+
     public void SetCreateUI()
     {
      float x1= Help.transform.position.x;
@@ -93,12 +103,16 @@ public class GameManager : MonoSingleton<GameManager>
         Help.transform.position = new Vector3(x1, y1);
         Cancel.transform.position = new Vector3(x2, y2);
     }
-    public void OnCreatePieceUI()
+    public void SetPiece(int arg0)
     {
-        CreatePieceUI.SetActive(true);
+            piece.GetComponent<piece>().pieceType = (PieceType)arg0;
+            var Piece = Instantiate(piece, Center, Quaternion.identity);
+            Piece.name = $"{arg0}";
     }
-    public void OnDestroyCreatePieceUI() 
+    #endregion
+    //创建棋子
+    public void SetPieceType()
     {
-        CreatePieceUI.SetActive(false);
+
     }
 }

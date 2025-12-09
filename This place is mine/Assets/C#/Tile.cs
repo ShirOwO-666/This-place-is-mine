@@ -10,12 +10,14 @@ public class Tile : MonoBehaviour
     public Collider2D TileCollider;
     public GameObject heightLight;
     private bool isCreatePieceUI=false;
+    public bool CanMove;
+    public Color CanMoveColor;
     [Header("Tile参数")]
     public Color baseColor, offsetColor;
     [Header("事件广播")]
     public TileEventSO CreateUIEvent;
     [Header("事件监听")]
-    public VoidEventSO isCreatePieceUIEvent;
+    public VoidEventSO OnCreatePieceUIEvent;
     public VoidEventSO OffCreatePieceUIEvent;
     private void Awake()
     {
@@ -23,14 +25,14 @@ public class Tile : MonoBehaviour
     }
     private void OnEnable()
     {
-        isCreatePieceUIEvent.OnEvent += CreatePieceUI;
+        OnCreatePieceUIEvent.OnEvent += CreatePieceUI;
         OffCreatePieceUIEvent.OnEvent += OffCreatePieceUI;
     }
 
 
     private void OnDisable()
     {
-        isCreatePieceUIEvent.OnEvent -= CreatePieceUI;
+        OnCreatePieceUIEvent.OnEvent -= CreatePieceUI;
         OffCreatePieceUIEvent.OnEvent -= OffCreatePieceUI;
     }
     public void OnMouseEnter()
@@ -52,12 +54,15 @@ public class Tile : MonoBehaviour
     }
     public void SetPiece()
     {
-        Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        if (TileCollider.OverlapPoint(mousePos))
+        if (!isCreatePieceUI)
         {
-            if (Input.GetMouseButtonDown(1))
+            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            if (TileCollider.OverlapPoint(mousePos))
             {
-                CreateUIEvent.RaiseEvent(this);
+                if (Input.GetMouseButtonDown(1))
+                {
+                    CreateUIEvent.RaiseEvent(this);
+                }
             }
         }
     }
@@ -69,5 +74,11 @@ public class Tile : MonoBehaviour
     {
         isCreatePieceUI = false;
     }
-
+    public void CanMoveTile()
+    {
+        if (CanMove)
+            colorTile.color = CanMoveColor;
+        else
+            colorTile.color = Color.white;
+    }
 }

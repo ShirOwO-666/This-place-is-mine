@@ -7,12 +7,13 @@ public class HexGrid2D : MonoBehaviour
 {
     public Tile tile;
     public Transform cameraPos;
-    public float size;
+    private float size;
     [Header("µØÍ¼²ÎÊý")]
     public int width;
     public int height;
     private void Awake()
     {
+        size = GameManager.Instance.TileSize;
         CreateGrid();
     }
     public void CreateGrid()
@@ -23,11 +24,12 @@ public class HexGrid2D : MonoBehaviour
             {
                 var TileMap = Instantiate(tile, GetPosition(x,y), Quaternion.identity);
                 TileMap.name = $"Tile{x}{y}";
+                GameManager.Instance.tiles.Add(TileMap);
                 bool isOffset = (x % 2 == 0 && y % 2 != 0) || (x % 2 != 0 && y % 2 == 0);
                 tile.Init(isOffset);
             }
         }
-       cameraPos.position=new Vector3((width*Mathf.Sqrt(3) / 2 )/ 2+transform.position.x, height/2 + transform.position.y, -10f);
+       cameraPos.position=new Vector3( (width* size * Mathf.Sqrt(3) / 2 )/ 2+transform.position.x, size * height /2 + transform.position.y, -10f);
 
     }
     public Vector3 GetPosition(int x,int y)
