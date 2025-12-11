@@ -9,16 +9,30 @@ public class piece : MonoBehaviour
     public PieceType pieceType;
     private  Collider2D PieceCollider;
     public float KingMoveRange;
+    public Collider2D ThisTile;
+    public LayerMask TileLayerMask;
+
+    [Header("ÊÂ¼þ¹ã²¥")]
+    public PieceEventSO OnPieceUI;
     private void Awake()
     {
-        KingMoveRange = KingMoveRange * GameManager.Instance.TileSize;
-       PieceCollider = GetComponent<Collider2D>();
+      PieceCollider = GetComponent<Collider2D>();
+    }
+    private void OnEnable()
+    {
+        ThisTile = Physics2D.OverlapBox(transform.position, transform.localScale, 0,TileLayerMask);
     }
     private void Update()
     {
 
     }
     private void OnMouseDown()
+    {
+        OnPieceUI.RaiseEvent(this);
+        GameManager.Instance.OffShowMoveTile(); ;
+        UiManager.Instance.OffCreateUI();
+    }
+    public void Move()
     {
         switch (pieceType)
         {
@@ -48,16 +62,12 @@ public class piece : MonoBehaviour
                 break;
         }
     }
+    
     private void kingShowMoveTile()
     {
-        for (int i = 0; i < GameManager.Instance.tiles.Count; i++)
-        {
-            //float DistX =  Mathf.Abs(transform.position.x - GameManager.Instance.tiles[i].transform.position.x);
-            //float DistY = Mathf.Abs(transform.position.y - GameManager.Instance.tiles[i].transform.position.y);
-            float Dist = Vector2.Distance(transform.position, GameManager.Instance.tiles[i].transform.position);
-            if (Dist <= KingMoveRange )
-                GameManager.Instance.tiles[i].CanMoveTile();
-        }
+       
+        ThisTile.GetComponent<Tile>().CreateDirection(KingMoveRange);
+       
     }
- 
+   
 }

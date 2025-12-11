@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8037533857475329005}
   - component: {fileID: 2153629675767452492}
   - component: {fileID: 2592701357339400502}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -102,8 +102,18 @@ MonoBehaviour:
   colorTile: {fileID: 8037533857475329005}
   TileCollider: {fileID: 0}
   heightLight: {fileID: 3704668687641382705}
-  CanMove: 1
+  CanMove: 0
+  isPiece: 0
   CanMoveColor: {r: 0.45400003, g: 0.45400003, b: 0.45400003, a: 1}
+  TileLayerMask:
+    serializedVersion: 2
+    m_Bits: 4096
+  PieceLayerMask:
+    serializedVersion: 2
+    m_Bits: 2048
+  s: []
+  q: []
+  r: []
   baseColor: {r: 1, g: 1, b: 1, a: 1}
   offsetColor: {r: 1, g: 1, b: 1, a: 1}
   CreateUIEvent: {fileID: 11400000, guid: 8ecb382b04b4af6408b1b4923b572f4b, type: 2}
@@ -170,7 +180,7 @@ GameObject:
   m_Component:
   - component: {fileID: 88381621955330995}
   - component: {fileID: 1423572244722718500}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Hexagon Pointed-Top
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -232,7 +242,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: -1874293453, guid: d8a6807f9594d73428d1a9b9bea36d44, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0.50980395}
   m_FlipX: 0

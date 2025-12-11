@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5829802162883224825}
   - component: {fileID: 821543642368894839}
   - component: {fileID: -8703458515054097118}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Piece
   m_TagString: Piece
   m_Icon: {fileID: 0}
@@ -99,7 +99,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pieceType: 0
-  KingMoveRange: 2
+  KingMoveRange: 1
+  ThisTile: {fileID: 0}
+  TileLayerMask:
+    serializedVersion: 2
+    m_Bits: 4096
+  OnPieceUI: {fileID: 11400000, guid: a87aa280f9514e74f998482bceab6f34, type: 2}
 --- !u!61 &-8703458515054097118
 BoxCollider2D:
   m_ObjectHideFlags: 0
