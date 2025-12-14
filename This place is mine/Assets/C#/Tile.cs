@@ -3,22 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using System.Linq;
 
 public class Tile : MonoBehaviour
 {
     [Header("声明")]
+    public piece ThisPiece;
     public SpriteRenderer colorTile;
     public Collider2D TileCollider;
     public GameObject heightLight;
     private bool isCreatePieceUI=false;
     public bool CanMove;
+    public bool CanAtt;
     public bool isPiece=false;
     public Color CanMoveColor;
     public LayerMask TileLayerMask;
     public LayerMask PieceLayerMask;
-    public Collider2D[] s;
-    public Collider2D[] q;
-    public Collider2D[] r;
     [Header("Tile参数")]
     public Color baseColor, offsetColor;
     [Header("事件广播")]
@@ -50,6 +50,15 @@ public class Tile : MonoBehaviour
     public void OnMouseExit()
     {
         heightLight.SetActive(false);
+    }
+    private void OnMouseDown()
+    {
+        if (CanMove)
+        {
+            ThisPiece.tile=this;
+            GameManager.Instance.OffShowMoveTile();
+            UiManager.Instance.OffPieceUI();
+        }
     }
     private void Update()
     {
@@ -87,6 +96,17 @@ public class Tile : MonoBehaviour
     {
         isCreatePieceUI = false;
     }
+    public void isCanMove()
+    {
+        if(isPiece)
+        {
+            CanMove = false;
+        }
+        else
+        {
+            CanMove = true;
+        }
+    }
     public void CanMoveTile()
     {
         if (CanMove)
@@ -94,26 +114,64 @@ public class Tile : MonoBehaviour
         else
             colorTile.color = Color.white;
     }
-    public void CreateDirection(float Range)
+    public void CreateMoveDirection(float Range,piece piece,bool restrict)
     {
-     
-      s = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, Range * GameManager.Instance.TileSize * Mathf.Sqrt(3) ), 30, TileLayerMask);
-      q = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, Range * GameManager.Instance.TileSize * Mathf.Sqrt(3) ), -30, TileLayerMask);
-      r = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, Range * GameManager.Instance.TileSize * Mathf.Sqrt(3) ), 90, TileLayerMask);
-        for (int i = 0; i < s.Length; i++)
+        Collider2D[] s = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, Range * GameManager.Instance.TileSize * Mathf.Sqrt(3) ), 30, TileLayerMask);
+        Collider2D[] q = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, Range * GameManager.Instance.TileSize * Mathf.Sqrt(3) ), -30, TileLayerMask);
+        Collider2D[] r = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, Range * GameManager.Instance.TileSize * Mathf.Sqrt(3) ), 90, TileLayerMask);
+        Collider2D[] s0 = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, (Range-1) * GameManager.Instance.TileSize * Mathf.Sqrt(3)), 30, TileLayerMask);
+        Collider2D[] q0 = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, (Range-1) * GameManager.Instance.TileSize * Mathf.Sqrt(3)), -30, TileLayerMask);
+        Collider2D[] r0 = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, (Range-1) * GameManager.Instance.TileSize * Mathf.Sqrt(3)), 90, TileLayerMask);
+        if (restrict)
         {
-            s[i].GetComponent<Tile>().CanMove=true;
-            s[i].GetComponent<Tile>().CanMoveTile();
+            s = s.Except(s0).ToArray();
+            q = q.Except(q0).ToArray();
+            r = r.Except(r0).ToArray();
+            for (int i = 0; i < s.Length; i++)
+            {
+                s[i].GetComponent<Tile>().ThisPiece = piece;
+                s[i].GetComponent<Tile>().isCanMove();
+                s[i].GetComponent<Tile>().CanMoveTile();
+            }
+            for (int i = 0; i < q.Length; i++)
+            {
+                q[i].GetComponent<Tile>().ThisPiece = piece;
+                q[i].GetComponent<Tile>().isCanMove();
+                q[i].GetComponent<Tile>().CanMoveTile();
+            }
+            for (int i = 0; i < r.Length; i++)
+            {
+                r[i].GetComponent<Tile>().ThisPiece = piece;
+                r[i].GetComponent<Tile>().isCanMove();
+                r[i].GetComponent<Tile>().CanMoveTile();
+            }
+            CanMove = true;
+            CanMoveTile();
         }
-        for (int i = 0; i < q.Length; i++)
+        else
         {
-            q[i].GetComponent<Tile>().CanMove = true;
-            q[i].GetComponent<Tile>().CanMoveTile();
+            for (int i = 0; i < s.Length; i++)
+            {
+                s[i].GetComponent<Tile>().ThisPiece = piece;
+                s[i].GetComponent<Tile>().isCanMove();
+                s[i].GetComponent<Tile>().CanMoveTile();
+            }
+            for (int i = 0; i < q.Length; i++)
+            {
+                q[i].GetComponent<Tile>().ThisPiece = piece;
+                q[i].GetComponent<Tile>().isCanMove();
+                q[i].GetComponent<Tile>().CanMoveTile();
+            }
+            for (int i = 0; i < r.Length; i++)
+            {
+                r[i].GetComponent<Tile>().ThisPiece = piece;
+                r[i].GetComponent<Tile>().isCanMove();
+                r[i].GetComponent<Tile>().CanMoveTile();
+            }
         }
-        for (int i = 0; i < r.Length; i++)
-        {
-            r[i].GetComponent<Tile>().CanMove = true;
-            r[i].GetComponent<Tile>().CanMoveTile();
-        }
+    }
+    public void CreateAttDirection(float Range, piece piece, bool restrict)
+    {
+
     }
 }

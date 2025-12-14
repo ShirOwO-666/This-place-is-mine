@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
     public enum PieceType
     {
-        king, Cavalry, Archer, Chariot, Bird, Infantry, knight, Architect
+        King, Cavalry, Archer, Chariot, Bird, Infantry, Knight, Architect
     }
 
 

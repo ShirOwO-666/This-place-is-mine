@@ -99,12 +99,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pieceType: 0
+  Speed: 25
   KingMoveRange: 1
+  CavalryMoveRange: 2
+  ArcherMoverRange: 1
+  ChariotMoveRange: 3
+  BirdMoveRange: 2
+  InfantryMoveRange: 1
+  KnightMoveRange: 1
+  ArchitectMoveRange: 1
   ThisTile: {fileID: 0}
   TileLayerMask:
     serializedVersion: 2
     m_Bits: 4096
+  isMove: 0
+  tile: {fileID: 0}
   OnPieceUI: {fileID: 11400000, guid: a87aa280f9514e74f998482bceab6f34, type: 2}
+  OnCreatePieceUIEvent: {fileID: 11400000, guid: 490fce0ae8eea1945ba78ce42cae1d92, type: 2}
+  OffCreatePieceUIEvent: {fileID: 11400000, guid: f8c2f5ecdeddd294aa6f4ee6215ca0e6, type: 2}
 --- !u!61 &-8703458515054097118
 BoxCollider2D:
   m_ObjectHideFlags: 0

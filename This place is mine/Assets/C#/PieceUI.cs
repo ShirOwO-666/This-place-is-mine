@@ -14,6 +14,7 @@ public class PieceUI : MonoBehaviour
     public PieceEventSO OnPieceUIEvent;
     private void Awake()
     {
+        Att.onClick.AddListener(SetAtt);
         Move.onClick.AddListener(SetMove);
         Cancel.onClick.AddListener(SetCancel);
     }
@@ -28,6 +29,10 @@ public class PieceUI : MonoBehaviour
     public void GetPiece(piece a)
     {
         piece = a;
+    }
+    public void SetAtt()
+    {
+        piece.Att();
     }
     public void SetMove()
     {

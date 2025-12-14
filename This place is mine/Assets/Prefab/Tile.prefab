@@ -99,6 +99,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85d46a1302f8a4241a0991e0458d1f1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ThisPiece: {fileID: 0}
   colorTile: {fileID: 8037533857475329005}
   TileCollider: {fileID: 0}
   heightLight: {fileID: 3704668687641382705}
