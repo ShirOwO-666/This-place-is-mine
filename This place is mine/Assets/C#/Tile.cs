@@ -11,16 +11,16 @@ public class Tile : MonoBehaviour
     public piece ThisPiece;
     public SpriteRenderer colorTile;
     public Collider2D TileCollider;
-    public GameObject heightLight;
+    public Collider2D AttPiece;
     private bool isCreatePieceUI=false;
     public bool CanMove;
     public bool CanAtt;
     public bool isPiece=false;
-    public Color CanMoveColor;
     public LayerMask TileLayerMask;
     public LayerMask PieceLayerMask;
     [Header("Tile参数")]
-    public Color baseColor, offsetColor;
+    public GameObject heightLight;
+    public Color CanMoveColor;
     [Header("事件广播")]
     public TileEventSO CreateUIEvent;
     [Header("事件监听")]
@@ -59,16 +59,20 @@ public class Tile : MonoBehaviour
             GameManager.Instance.OffShowMoveTile();
             UiManager.Instance.OffPieceUI();
         }
+        if (CanAtt)
+        {
+            ThisPiece.tile=this;
+            Destroy(AttPiece.gameObject);
+            GameManager.Instance.OffShowMoveTile();
+            UiManager.Instance.OffPieceUI();
+        }
     }
     private void Update()
     {
         SetPiece();
         isPiece = Physics2D.OverlapBox(transform.position, transform.localScale, 0, PieceLayerMask);
     }
-    public void Init(bool isOffset)
-    {
-        colorTile.color = isOffset ? offsetColor : baseColor;
-    }
+
     public void SetPiece()
     {
         if (!isPiece) {
@@ -107,12 +111,28 @@ public class Tile : MonoBehaviour
             CanMove = true;
         }
     }
+    public void isCanAtt()
+    {
+        AttPiece = Physics2D.OverlapBox(transform.position, transform.localScale, 0, PieceLayerMask);
+        if (isPiece&&ThisPiece.team!=AttPiece.GetComponent<piece>().team)
+        {
+            CanAtt = true;
+        }
+        else
+        {
+            CanAtt = false;
+        }
+    }
     public void CanMoveTile()
     {
         if (CanMove)
             colorTile.color = CanMoveColor;
         else
             colorTile.color = Color.white;
+    }
+    public void CanAttTile()
+    {    
+            colorTile.color = CanMoveColor;
     }
     public void CreateMoveDirection(float Range,piece piece,bool restrict)
     {
@@ -172,6 +192,59 @@ public class Tile : MonoBehaviour
     }
     public void CreateAttDirection(float Range, piece piece, bool restrict)
     {
-
-    }
+        Collider2D[] s = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, Range * GameManager.Instance.TileSize * Mathf.Sqrt(3)), 30, TileLayerMask);
+        Collider2D[] q = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, Range * GameManager.Instance.TileSize * Mathf.Sqrt(3)), -30, TileLayerMask);
+        Collider2D[] r = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, Range * GameManager.Instance.TileSize * Mathf.Sqrt(3)), 90, TileLayerMask);
+        Collider2D[] s0 = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, (Range - 1) * GameManager.Instance.TileSize * Mathf.Sqrt(3)), 30, TileLayerMask);
+        Collider2D[] q0 = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, (Range - 1) * GameManager.Instance.TileSize * Mathf.Sqrt(3)), -30, TileLayerMask);
+        Collider2D[] r0 = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, (Range - 1) * GameManager.Instance.TileSize * Mathf.Sqrt(3)), 90, TileLayerMask);
+        if (restrict)
+        {
+            s = s.Except(s0).ToArray();
+            q = q.Except(q0).ToArray();
+            r = r.Except(r0).ToArray();
+            for (int i = 0; i < s.Length; i++)
+            {
+                s[i].GetComponent<Tile>().ThisPiece = piece;
+                s[i].GetComponent<Tile>().isCanAtt();
+                s[i].GetComponent<Tile>().CanAttTile();
+            }
+            for (int i = 0; i < q.Length; i++)
+            {
+                q[i].GetComponent<Tile>().ThisPiece = piece;
+                q[i].GetComponent<Tile>().isCanAtt();
+                q[i].GetComponent<Tile>().CanAttTile();
+            }
+            for (int i = 0; i < r.Length; i++)
+            {
+                r[i].GetComponent<Tile>().ThisPiece = piece;
+                r[i].GetComponent<Tile>().isCanAtt();
+                r[i].GetComponent<Tile>().CanAttTile();
+            }
+            CanMove = true;
+            CanMoveTile();
+        }
+        else
+        {
+            for (int i = 0; i < s.Length; i++)
+            {
+                s[i].GetComponent<Tile>().ThisPiece = piece;
+                s[i].GetComponent<Tile>().isCanAtt();
+                s[i].GetComponent<Tile>().CanAttTile();
+            }
+            for (int i = 0; i < q.Length; i++)
+            {
+                q[i].GetComponent<Tile>().ThisPiece = piece;
+                q[i].GetComponent<Tile>().isCanAtt();
+                q[i].GetComponent<Tile>().CanAttTile();
+            }
+            for (int i = 0; i < r.Length; i++)
+            {
+                r[i].GetComponent<Tile>().ThisPiece = piece;
+                r[i].GetComponent<Tile>().isCanAtt();
+                r[i].GetComponent<Tile>().CanAttTile();
+            }
+        }
+    
+     }
 }

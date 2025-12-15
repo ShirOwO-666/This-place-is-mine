@@ -8,11 +8,13 @@ using static UnityEngine.GraphicsBuffer;
 public class piece : MonoBehaviour
 {
     public PieceType pieceType;
+    public Team team;
     private  Collider2D PieceCollider;
     public Collider2D ThisTile;
     public LayerMask TileLayerMask;
     private bool isCreatePieceUI = false;
     public bool isMove=false;
+    public bool isAtt = false;
     public Tile tile;
     [Header("Æå×Ó¹¥»÷²ÎÊý")]
     public float KingAttRange;
@@ -55,6 +57,7 @@ public class piece : MonoBehaviour
     private void Update()
     {
         PieceMove();
+        PieceAtt();
     }
     private void OnMouseDown()
     {
@@ -109,28 +112,28 @@ public class piece : MonoBehaviour
         switch (pieceType)
         {
             case PieceType.King:
-                ShowAttTile(KingMoveRange, false);
+                ShowAttTile(KingAttRange, false);
                 break;
             case PieceType.Cavalry:
-                ShowAttTile(CavalryMoveRange, true);
+                ShowAttTile(CavalryAttRange, false);
                 break;
             case PieceType.Archer:
-                ShowAttTile(ArcherMoverRange, false);
+                ShowAttTile(ArcherAttRange, true);
                 break;
             case PieceType.Chariot:
-                ShowAttTile(ChariotMoveRange, false);
+                ShowAttTile(ChariotAttRange, false);
                 break;
             case PieceType.Bird:
-                ShowAttTile(BirdMoveRange, false);
+                ShowAttTile(BirdAttRange, false);
                 break;
             case PieceType.Infantry:
-                ShowAttTile(InfantryMoveRange, false);
+                ShowAttTile(InfantryAttRange, false);
                 break;
             case PieceType.Knight:
-                ShowAttTile(KnightMoveRange, false);
+                ShowAttTile(KnightAttRange, false);
                 break;
             case PieceType.Architect:
-                ShowAttTile(ArchitectMoveRange, false);
+                ShowAttTile(ArchitectAttRange, false);
                 break;
         }
     }
@@ -141,17 +144,25 @@ public class piece : MonoBehaviour
                 transform.position = Vector3.MoveTowards(transform.position, tile.transform.position, Speed * Time.deltaTime);
         }
     }
+    public void PieceAtt()
+    {
+        if (isAtt && tile != null)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, tile.transform.position, Speed * Time.deltaTime);
+        }
+    }
     private void ShowMoveTile(float Range,bool restrict)
     {
 
         ThisTile.GetComponent<Tile>().CreateMoveDirection(Range,this, restrict);
         isMove = true;
-
+        isAtt = false;
     }
     private void ShowAttTile(float Range, bool restrict)
     {
 
         ThisTile.GetComponent<Tile>().CreateAttDirection(Range, this, restrict);
-
+        isAtt = true;
+        isMove=false;
     }
 }

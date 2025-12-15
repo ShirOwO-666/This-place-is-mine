@@ -25,8 +25,6 @@ public class HexGrid2D : MonoBehaviour
                 var TileMap = Instantiate(tile, GetPosition(x,y), Quaternion.identity);
                 TileMap.name = $"Tile{x}{y}";
                 GameManager.Instance.tiles.Add(TileMap);
-                bool isOffset = (x % 2 == 0 && y % 2 != 0) || (x % 2 != 0 && y % 2 == 0);
-                tile.Init(isOffset);
             }
         }
        cameraPos.position=new Vector3( ((width-0.5f)* size * Mathf.Sqrt(3) / 2 )/ 2+transform.position.x, size * 0.75f * height /2 + transform.position.y, -10f);

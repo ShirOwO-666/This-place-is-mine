@@ -7,5 +7,9 @@ using UnityEngine.Events;
     {
         King, Cavalry, Archer, Chariot, Bird, Infantry, Knight, Architect
     }
+public enum Team
+{
+   bule,red
+}
 
 

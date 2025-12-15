@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UiManager : MonoSingleton<UiManager>
 {
@@ -25,6 +26,15 @@ public class UiManager : MonoSingleton<UiManager>
     private float UIAngle1 = 0;
     private float UIAngle2 = 0;
     public Vector3 Center = Vector3.zero;//旋转中心
+
+    [Header("部署棋子UI")]
+    public GameObject CavalryPieceUI;
+    public GameObject ArcherPieceUI;
+    public GameObject ChariotPieceUI;
+    public GameObject BirdPieceUI;
+    public GameObject InfantryPieceUI;
+    public GameObject KnightPieceUI;
+    public GameObject ArchitectPieceUI;
 
     [Header("事件监听")]
     public TileEventSO CreateUIEvent;
@@ -55,6 +65,7 @@ public class UiManager : MonoSingleton<UiManager>
     {
         SetCreateUI();
         SetPieceUI();
+        CanCreatePiece();
     }
     public void OnCreatePieceUI()
     {
@@ -145,5 +156,65 @@ public class UiManager : MonoSingleton<UiManager>
         }
         Move.transform.position = new Vector3(x1, y1);
         CancelPieceUI.transform.position = new Vector3(x2, y2);
+    }
+    
+    public void CanCreatePiece()
+    {
+        if (GameManager.Instance.CavalryQuantity <= 0)
+        {
+            CavalryPieceUI.GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            CavalryPieceUI.GetComponent<Button>().interactable = true;
+        }
+        if (GameManager.Instance.ArcherQuantity <= 0)
+        {
+            ArcherPieceUI.GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            ArcherPieceUI.GetComponent<Button>().interactable = true;
+        }
+        if (GameManager.Instance.ChariotQuantity <= 0)
+        {
+            ChariotPieceUI.GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            ChariotPieceUI.GetComponent<Button>().interactable = true;
+        }
+        if (GameManager.Instance.BirdQuantity <= 0)
+        {
+            BirdPieceUI.GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            BirdPieceUI.GetComponent<Button>().interactable = true;
+        }
+        if (GameManager.Instance.InfantryQuantity <= 0)
+        {
+           InfantryPieceUI.GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            InfantryPieceUI.GetComponent<Button>().interactable = true;
+        }
+        if (GameManager.Instance.KnightQuantity <= 0)
+        {
+            KnightPieceUI.GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+           KnightPieceUI.GetComponent<Button>().interactable = true;
+        }
+        if (GameManager.Instance.ArchitectQuantity <= 0)
+        {
+            ArchitectPieceUI.GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            ArchitectPieceUI.GetComponent<Button>().interactable = true;
+        }
     }
 }

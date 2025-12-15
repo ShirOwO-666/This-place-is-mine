@@ -32,10 +32,12 @@ public class PieceUI : MonoBehaviour
     }
     public void SetAtt()
     {
+        GameManager.Instance.OffShowMoveTile();
         piece.Att();
     }
     public void SetMove()
     {
+        GameManager.Instance.OffShowAttTile();
         piece.Move();
     }
     public void SetCancel()
