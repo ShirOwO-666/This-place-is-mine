@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 
 public class GameManager : MonoSingleton<GameManager>
 {
@@ -18,6 +19,8 @@ public class GameManager : MonoSingleton<GameManager>
     public Team TeamRound;
     public PlayerData BulePlayerData;
     public PlayerData RedPlayerData;
+    private PlayerData NowPlayerData;
+    private PlayerData EnemyPlayerData;
     [Header("部署棋子")]
     public GameObject piece;
     public float CavalryQuantity;
@@ -28,11 +31,17 @@ public class GameManager : MonoSingleton<GameManager>
     public float KnightQuantity;
     public float ArchitectQuantity;
     #region
-
+    private void Start()
+    {
+        NowPlayerData = BulePlayerData;
+        EnemyPlayerData = RedPlayerData;
+    }
     public void SetPiece(int arg0)
     {
         piece.GetComponent<piece>().pieceType = (PieceType)arg0;
         piece.GetComponent<piece>().team = TeamRound;
+        if(piece.GetComponent<piece>().team==Team.red)
+            piece.GetComponent<SpriteRenderer>().flipX = true;
         GameObject Piece;
        
         switch (piece.GetComponent<piece>().pieceType)
@@ -120,6 +129,7 @@ public class GameManager : MonoSingleton<GameManager>
     public void RoundStart()
     {
         StartCoroutine(RoundOver());
+        ExchangePlayerData();
     }
     IEnumerator RoundOver()
     {
@@ -142,6 +152,39 @@ public class GameManager : MonoSingleton<GameManager>
         else if (TeamRound == Team.red)
         {
             DataOutput(Team.red);
+        }
+    }
+    public void ExchangePlayerData()
+    {
+        var a = EnemyPlayerData;
+        EnemyPlayerData = NowPlayerData;
+        NowPlayerData = a;
+    }
+    public void AddPieceQuantity(Collider2D piece)
+    {
+        switch (piece.GetComponent<piece>().pieceType)
+        {
+            case PieceType.Cavalry:
+                EnemyPlayerData.CavalryQuantity += 1;
+                break;
+            case PieceType.Archer:
+                EnemyPlayerData.ArcherQuantity += 1;
+                break;
+            case PieceType.Chariot:
+                EnemyPlayerData.ChariotQuantity += 1;
+                break;
+            case PieceType.Bird:
+                EnemyPlayerData.BirdQuantity += 1;
+                break;
+            case PieceType.Infantry:
+                EnemyPlayerData.InfantryQuantity += 1;
+                break;
+            case PieceType.Knight:
+                EnemyPlayerData.KnightQuantity += 1;
+                break;
+            case PieceType.Architect:
+                EnemyPlayerData.ArchitectQuantity += 1;
+                break;
         }
     }
     //数据获取

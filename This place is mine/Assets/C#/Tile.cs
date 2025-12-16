@@ -53,19 +53,8 @@ public class Tile : MonoBehaviour
     }
     private void OnMouseDown()
     {
-        if (CanMove)
-        {
-            ThisPiece.tile=this;
-            GameManager.Instance.OffShowMoveTile();
-            UiManager.Instance.OffPieceUI();
-        }
-        if (CanAtt)
-        {
-            ThisPiece.tile=this;
-            Destroy(AttPiece.gameObject);
-            GameManager.Instance.OffShowMoveTile();
-            UiManager.Instance.OffPieceUI();
-        }
+        Move();
+        Att();
     }
     private void Update()
     {
@@ -100,6 +89,26 @@ public class Tile : MonoBehaviour
     {
         isCreatePieceUI = false;
     }
+    public void Move()
+    {
+        if (CanMove)
+        {
+            ThisPiece.tile = this;
+            GameManager.Instance.OffShowMoveTile();
+            UiManager.Instance.OffPieceUI();
+        }
+    }
+    public void Att()
+    {
+        if (CanAtt)
+        {
+            ThisPiece.tile = this;
+            Destroy(AttPiece.gameObject);
+            GameManager.Instance.AddPieceQuantity(AttPiece);
+            GameManager.Instance.OffShowMoveTile();
+            UiManager.Instance.OffPieceUI();
+        }
+    }
     public void isCanMove()
     {
         if(isPiece)
@@ -117,6 +126,7 @@ public class Tile : MonoBehaviour
         if (isPiece&&ThisPiece.team!=AttPiece.GetComponent<piece>().team)
         {
             CanAtt = true;
+            AttPiece.GetComponent<piece>().CanAtt = true;
         }
         else
         {
@@ -191,60 +201,33 @@ public class Tile : MonoBehaviour
         }
     }
     public void CreateAttDirection(float Range, piece piece, bool restrict)
+    {  
+            for (int i = 0; i < GameManager.Instance.tiles.Count; i++)
+            {
+                GameManager.Instance.tiles[i].GetComponent<Tile>().ThisPiece = piece;
+                GameManager.Instance.tiles[i].GetComponent<Tile>().AttDirection(Range,restrict);
+            }
+     }
+    public void AttDirection(float Range,bool restrict)
     {
-        Collider2D[] s = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, Range * GameManager.Instance.TileSize * Mathf.Sqrt(3)), 30, TileLayerMask);
-        Collider2D[] q = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, Range * GameManager.Instance.TileSize * Mathf.Sqrt(3)), -30, TileLayerMask);
-        Collider2D[] r = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, Range * GameManager.Instance.TileSize * Mathf.Sqrt(3)), 90, TileLayerMask);
-        Collider2D[] s0 = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, (Range - 1) * GameManager.Instance.TileSize * Mathf.Sqrt(3)), 30, TileLayerMask);
-        Collider2D[] q0 = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, (Range - 1) * GameManager.Instance.TileSize * Mathf.Sqrt(3)), -30, TileLayerMask);
-        Collider2D[] r0 = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, (Range - 1) * GameManager.Instance.TileSize * Mathf.Sqrt(3)), 90, TileLayerMask);
         if (restrict)
         {
-            s = s.Except(s0).ToArray();
-            q = q.Except(q0).ToArray();
-            r = r.Except(r0).ToArray();
-            for (int i = 0; i < s.Length; i++)
+            var a = Vector2.Distance(transform.position, ThisPiece.transform.position);
+            if (a <= Range * GameManager.Instance.TileSize&&a> (Range-1) * GameManager.Instance.TileSize)
             {
-                s[i].GetComponent<Tile>().ThisPiece = piece;
-                s[i].GetComponent<Tile>().isCanAtt();
-                s[i].GetComponent<Tile>().CanAttTile();
+                isCanAtt();
+                CanAttTile();
             }
-            for (int i = 0; i < q.Length; i++)
-            {
-                q[i].GetComponent<Tile>().ThisPiece = piece;
-                q[i].GetComponent<Tile>().isCanAtt();
-                q[i].GetComponent<Tile>().CanAttTile();
-            }
-            for (int i = 0; i < r.Length; i++)
-            {
-                r[i].GetComponent<Tile>().ThisPiece = piece;
-                r[i].GetComponent<Tile>().isCanAtt();
-                r[i].GetComponent<Tile>().CanAttTile();
-            }
-            CanMove = true;
-            CanMoveTile();
         }
         else
         {
-            for (int i = 0; i < s.Length; i++)
+            var a = Vector2.Distance(transform.position, ThisPiece.transform.position);
+            if (a <= Range * GameManager.Instance.TileSize)
             {
-                s[i].GetComponent<Tile>().ThisPiece = piece;
-                s[i].GetComponent<Tile>().isCanAtt();
-                s[i].GetComponent<Tile>().CanAttTile();
-            }
-            for (int i = 0; i < q.Length; i++)
-            {
-                q[i].GetComponent<Tile>().ThisPiece = piece;
-                q[i].GetComponent<Tile>().isCanAtt();
-                q[i].GetComponent<Tile>().CanAttTile();
-            }
-            for (int i = 0; i < r.Length; i++)
-            {
-                r[i].GetComponent<Tile>().ThisPiece = piece;
-                r[i].GetComponent<Tile>().isCanAtt();
-                r[i].GetComponent<Tile>().CanAttTile();
+                isCanAtt();
+                CanAttTile();
             }
         }
-    
-     }
+     
+    }
 }

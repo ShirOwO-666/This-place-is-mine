@@ -15,6 +15,7 @@ public class piece : MonoBehaviour
     private bool isCreatePieceUI = false;
     public bool isMove=false;
     public bool isAtt = false;
+    public bool CanAtt = false;
     public Tile tile;
     [Header("Æå×Ó¹¥»÷²ÎÊý")]
     public float KingAttRange;
@@ -61,13 +62,22 @@ public class piece : MonoBehaviour
     }
     private void OnMouseDown()
     {
-        if (!isCreatePieceUI)
+        if (team==GameManager.Instance.TeamRound)
         {
-            OnPieceUI.RaiseEvent(this);
-            ThisTile = Physics2D.OverlapBox(transform.position, transform.localScale, 0, TileLayerMask);
-            GameManager.Instance.OffShowMoveTile(); ;
-            UiManager.Instance.OffCreateUI();
+            if (!isCreatePieceUI)
+            {
+                OnPieceUI.RaiseEvent(this);
+                ThisTile = Physics2D.OverlapBox(transform.position, transform.localScale, 0, TileLayerMask);
+                GameManager.Instance.OffShowMoveTile(); ;
+                UiManager.Instance.OffCreateUI();
+            }          
         }
+        if (CanAtt)
+        {
+            ThisTile = Physics2D.OverlapBox(transform.position, transform.localScale, 0, TileLayerMask);
+            ThisTile.GetComponent<Tile>().Att();
+        }
+
     }
     private void CreatePieceUI()
     {
@@ -146,9 +156,19 @@ public class piece : MonoBehaviour
     }
     public void PieceAtt()
     {
-        if (isAtt && tile != null)
+        if (pieceType != PieceType.Archer)
         {
-            transform.position = Vector3.MoveTowards(transform.position, tile.transform.position, Speed * Time.deltaTime);
+            if (isAtt && tile != null)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, tile.transform.position, Speed * Time.deltaTime);
+            }
+        }
+        else
+        {
+            if (isAtt && tile != null)
+            {
+                tile = null;
+            }
         }
     }
     private void ShowMoveTile(float Range,bool restrict)

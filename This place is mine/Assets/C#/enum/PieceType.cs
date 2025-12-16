@@ -11,5 +11,8 @@ public enum Team
 {
    bule,red
 }
-
+public enum Terrain
+{
+    Tile, Forest, Village, River, Tower
+}
 
