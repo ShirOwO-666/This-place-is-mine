@@ -16,6 +16,7 @@ public class piece : MonoBehaviour
     public bool isMove=false;
     public bool isAtt = false;
     public bool CanAtt = false;
+    public bool CanLook = true;
     public Tile tile;
     [Header("Æå×Ó¹¥»÷²ÎÊý")]
     public float KingAttRange;
@@ -55,10 +56,13 @@ public class piece : MonoBehaviour
         OnCreatePieceUIEvent.OnEvent -= CreatePieceUI;
         OffCreatePieceUIEvent.OnEvent -= OffCreatePieceUI;
     }
+
     private void Update()
     {
         PieceMove();
         PieceAtt();
+        if(tile!=null)
+        ifTileType(tile);
     }
     private void OnMouseDown()
     {
@@ -68,7 +72,9 @@ public class piece : MonoBehaviour
             {
                 OnPieceUI.RaiseEvent(this);
                 ThisTile = Physics2D.OverlapBox(transform.position, transform.localScale, 0, TileLayerMask);
-                GameManager.Instance.OffShowMoveTile(); ;
+                UiManager.Instance.ResetPieceTeam();
+                ThisTile.GetComponent<Tile>().TeamTile.GetComponent<SpriteRenderer>().sprite = UiManager.Instance.GreenTile;
+                GameManager.Instance.OffShowMoveTile(); 
                 UiManager.Instance.OffCreateUI();
             }          
         }
@@ -160,6 +166,7 @@ public class piece : MonoBehaviour
         {
             if (isAtt && tile != null)
             {
+                tile.GetComponent<Tile>().TeamTile.GetComponent<SpriteRenderer>().sprite = UiManager.Instance.GreenTile;
                 transform.position = Vector3.MoveTowards(transform.position, tile.transform.position, Speed * Time.deltaTime);
             }
         }
@@ -185,4 +192,10 @@ public class piece : MonoBehaviour
         isAtt = true;
         isMove=false;
     }
+    public void ifTileType(Tile tile)
+    {
+        tile.ifTile(this);
+    }
+
+
 }

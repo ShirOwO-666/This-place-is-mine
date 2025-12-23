@@ -17,12 +17,18 @@ public class GameManager : MonoSingleton<GameManager>
     public int RedGameHeart;
     public float Round;
     public Team TeamRound;
+    public bool ActionPoint=true;
+    public int BuleVictoryPoint;
+    public int RedVictoryPoint;
+    public int BuleVictory = 0;
+    public int RedVictory = 0;
     public PlayerData BulePlayerData;
     public PlayerData RedPlayerData;
     private PlayerData NowPlayerData;
     private PlayerData EnemyPlayerData;
     [Header("²¿ÊðÆå×Ó")]
     public GameObject piece;
+    public Sprite[] PieceSprite;
     public float CavalryQuantity;
     public float ArcherQuantity;
     public float ChariotQuantity;
@@ -35,78 +41,98 @@ public class GameManager : MonoSingleton<GameManager>
     {
         NowPlayerData = BulePlayerData;
         EnemyPlayerData = RedPlayerData;
+        UiManager.Instance.ResetPieceTeam();
     }
     public void SetPiece(int arg0)
     {
-        piece.GetComponent<piece>().pieceType = (PieceType)arg0;
-        piece.GetComponent<piece>().team = TeamRound;
-        if(piece.GetComponent<piece>().team==Team.red)
-            piece.GetComponent<SpriteRenderer>().flipX = true;
-        GameObject Piece;
-       
-        switch (piece.GetComponent<piece>().pieceType)
-        {
-            case PieceType.King:
-            Piece = Instantiate(piece, UiManager.Instance.Center, Quaternion.identity);
-                Piece.name = $"{piece.GetComponent<piece>().pieceType}";
-                break;
-            case PieceType.Cavalry:
-                if (CavalryQuantity>0)
-                {
+        if (ActionPoint)
+        {   
+            piece.GetComponent<piece>().pieceType = (PieceType)arg0;
+            piece.GetComponent<piece>().team = TeamRound;
+            if (piece.GetComponent<piece>().team == Team.red)
+            {
+                piece.GetComponent<SpriteRenderer>().flipX = true;
+            }
+            else
+            {
+                piece.GetComponent<SpriteRenderer>().flipX = false;
+            }
+
+            GameObject Piece;
+
+            switch (piece.GetComponent<piece>().pieceType)
+            {
+                case PieceType.King:
                     Piece = Instantiate(piece, UiManager.Instance.Center, Quaternion.identity);
+                    Piece.GetComponent<SpriteRenderer>().sprite = PieceSprite[0];
                     Piece.name = $"{piece.GetComponent<piece>().pieceType}";
-                    CavalryQuantity -= 1;
-                }
-                break;
-            case PieceType.Archer:
-                if (ArcherQuantity > 0)
-                {
-                    Piece = Instantiate(piece, UiManager.Instance.Center, Quaternion.identity);
-                    Piece.name = $"{piece.GetComponent<piece>().pieceType}";
-                    ArcherQuantity -= 1;
-                }
-                break;
-            case PieceType.Chariot:
-                if (ChariotQuantity > 0)
-                {
-                    Piece = Instantiate(piece, UiManager.Instance.Center, Quaternion.identity);
-                    Piece.name = $"{piece.GetComponent<piece>().pieceType}";
-                    ChariotQuantity -= 1;
-                }
-                break;
-            case PieceType.Bird:
-                if (BirdQuantity > 0)
-                {
-                    Piece = Instantiate(piece, UiManager.Instance.Center, Quaternion.identity);
-                    Piece.name = $"{piece.GetComponent<piece>().pieceType}";
-                    BirdQuantity -= 1;
-                }
-                break;
-            case PieceType.Infantry:
-                if (InfantryQuantity > 0)
-                {
-                    Piece = Instantiate(piece, UiManager.Instance.Center, Quaternion.identity);
-                    Piece.name = $"{piece.GetComponent<piece>().pieceType}";
-                    InfantryQuantity -= 1;
-                }
-                break;
-            case PieceType.Knight:
-                if (KnightQuantity > 0)
-                {
-                    Piece = Instantiate(piece, UiManager.Instance.Center, Quaternion.identity);
-                    Piece.name = $"{piece.GetComponent<piece>().pieceType}";
-                    KnightQuantity -= 1;
-                }
-                break;
-            case PieceType.Architect:
-                if (ArchitectQuantity > 0)
-                {
-                    Piece = Instantiate(piece, UiManager.Instance.Center, Quaternion.identity);
-                    Piece.name = $"{piece.GetComponent<piece>().pieceType}";
-                    ArchitectQuantity -= 1;
-                }
-                break;
-        }   
+                    break;
+                case PieceType.Cavalry:
+                    if (CavalryQuantity > 0)
+                    {
+                        Piece = Instantiate(piece, UiManager.Instance.Center, Quaternion.identity);
+                        Piece.GetComponent<SpriteRenderer>().sprite = PieceSprite[1];
+                        Piece.name = $"{piece.GetComponent<piece>().pieceType}";
+                        CavalryQuantity -= 1;
+                    }
+                    break;
+                case PieceType.Archer:
+                    if (ArcherQuantity > 0)
+                    {
+                        Piece = Instantiate(piece, UiManager.Instance.Center, Quaternion.identity);
+                        Piece.GetComponent<SpriteRenderer>().sprite = PieceSprite[1];
+                        Piece.name = $"{piece.GetComponent<piece>().pieceType}";
+                        ArcherQuantity -= 1;
+                    }
+                    break;
+                case PieceType.Chariot:
+                    if (ChariotQuantity > 0)
+                    {
+                        Piece = Instantiate(piece, UiManager.Instance.Center, Quaternion.identity);
+                        Piece.GetComponent<SpriteRenderer>().sprite = PieceSprite[1];
+                        Piece.name = $"{piece.GetComponent<piece>().pieceType}";
+                        ChariotQuantity -= 1;
+                    }
+                    break;
+                case PieceType.Bird:
+                    if (BirdQuantity > 0)
+                    {
+                        Piece = Instantiate(piece, UiManager.Instance.Center, Quaternion.identity);
+                        Piece.GetComponent<SpriteRenderer>().sprite = PieceSprite[1];
+                        Piece.name = $"{piece.GetComponent<piece>().pieceType}";
+                        BirdQuantity -= 1;
+                    }
+                    break;
+                case PieceType.Infantry:
+                    if (InfantryQuantity > 0)
+                    {
+                        Piece = Instantiate(piece, UiManager.Instance.Center, Quaternion.identity);
+                        Piece.GetComponent<SpriteRenderer>().sprite = PieceSprite[1];
+                        Piece.name = $"{piece.GetComponent<piece>().pieceType}";
+                        InfantryQuantity -= 1;
+                    }
+                    break;
+                case PieceType.Knight:
+                    if (KnightQuantity > 0)
+                    {
+                        Piece = Instantiate(piece, UiManager.Instance.Center, Quaternion.identity);
+                        Piece.GetComponent<SpriteRenderer>().sprite = PieceSprite[1];
+                        Piece.name = $"{piece.GetComponent<piece>().pieceType}";
+                        KnightQuantity -= 1;
+                    }
+                    break;
+                case PieceType.Architect:
+                    if (ArchitectQuantity > 0)
+                    {
+                        Piece = Instantiate(piece, UiManager.Instance.Center, Quaternion.identity);
+                        Piece.GetComponent<SpriteRenderer>().sprite = PieceSprite[1];
+                        Piece.name = $"{piece.GetComponent<piece>().pieceType}";
+                        ArchitectQuantity -= 1;
+                    }
+                    break;
+            }
+            ActionPoint = false;
+        }
     }
     public void OffShowMoveTile()
     {
@@ -129,7 +155,14 @@ public class GameManager : MonoSingleton<GameManager>
     public void RoundStart()
     {
         StartCoroutine(RoundOver());
+        ActionPoint = true;
         ExchangePlayerData();
+        UiManager.Instance.OffCreateUI();
+        UiManager.Instance.OffPieceUI();
+        UiManager.Instance.ResetPieceTeam();
+        OffShowMoveTile();
+        OffShowAttTile();
+        Victory();
     }
     IEnumerator RoundOver()
     {
@@ -238,4 +271,24 @@ public class GameManager : MonoSingleton<GameManager>
      
     }
     #endregion
+    public void Victory()
+    {
+        if (BuleVictoryPoint == 3)
+        {
+            BuleVictory += 1;
+
+        }else if (RedVictoryPoint==3)
+        {
+            RedVictory += 1;
+        }
+
+        if (BuleVictoryPoint != 3)
+        {
+            BuleVictory =0;
+        }
+        else if (RedVictoryPoint!=3)
+        {
+            RedVictory = 0;
+        }
+    }
 }

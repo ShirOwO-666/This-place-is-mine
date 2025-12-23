@@ -1,10 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UiManager : MonoSingleton<UiManager>
 {
+    [Header("棋子阵容UI")]
+    public Sprite BuleTile;
+    public Sprite RedTile;
+    public Sprite GreenTile;
     [Header("部署UI")]
     public GameObject CreateUI;
     public GameObject PieceCanvas;
@@ -35,6 +40,15 @@ public class UiManager : MonoSingleton<UiManager>
     public GameObject InfantryPieceUI;
     public GameObject KnightPieceUI;
     public GameObject ArchitectPieceUI;
+    public TextMeshProUGUI CavalryPieceCounterUI;
+    public TextMeshProUGUI ArcherPieceCounterUI;
+    public TextMeshProUGUI ChariotPieceCounterUI;
+    public TextMeshProUGUI BirdPieceCounterUI;
+    public TextMeshProUGUI InfantryPieceCounterUI;
+    public TextMeshProUGUI KnightPieceCounterUI;
+    public TextMeshProUGUI ArchitectPieceCounterUI;
+    [Header("事件广播")]
+    public VoidEventSO ResetPieceTeamTileEvent;
 
     [Header("事件监听")]
     public TileEventSO CreateUIEvent;
@@ -66,6 +80,21 @@ public class UiManager : MonoSingleton<UiManager>
         SetCreateUI();
         SetPieceUI();
         CanCreatePiece();
+        isActionPoint();
+        SetCounterUI();
+    }
+    public void isActionPoint()
+    {
+        if (GameManager.Instance.ActionPoint)
+        {
+            CreatePiece.GetComponent<Button>().interactable = true;
+            Move.GetComponent<Button>().interactable = true;
+        }
+        else
+        {
+            CreatePiece.GetComponent<Button>().interactable=false;
+            Move.GetComponent<Button>().interactable = false;
+        }
     }
     public void OnCreatePieceUI()
     {
@@ -77,10 +106,13 @@ public class UiManager : MonoSingleton<UiManager>
     }
     public void OnCreateUI(Tile tile)
     {
+        OffCreateUI();
         UIAngle1 = Mathf.PI / 2;
         UIAngle2 = Mathf.PI / 2;
 
-        CreatePiece.SetActive(true);
+        if(tile.ThisTileType==TileType.Home&& GameManager.Instance.TeamRound== tile.ThisTeam)
+         CreatePiece.SetActive(true);
+
         Help.SetActive(true);
         Cancel.SetActive(true);
         Center = tile.transform.position;
@@ -216,5 +248,19 @@ public class UiManager : MonoSingleton<UiManager>
         {
             ArchitectPieceUI.GetComponent<Button>().interactable = true;
         }
+    }
+    public void ResetPieceTeam()
+    {
+        ResetPieceTeamTileEvent.RaiseEvent();
+    }
+    public void SetCounterUI()
+    {
+        CavalryPieceCounterUI.text =""+ GameManager.Instance.CavalryQuantity;
+        ArcherPieceCounterUI.text = "" + GameManager.Instance.ArcherQuantity;
+        ChariotPieceCounterUI.text = "" + GameManager.Instance.ChariotQuantity;
+        BirdPieceCounterUI.text = "" + GameManager.Instance.BirdQuantity;
+        InfantryPieceCounterUI.text = "" + GameManager.Instance.InfantryQuantity;
+        KnightPieceCounterUI.text = "" + GameManager.Instance.KnightQuantity;
+        ArchitectPieceCounterUI.text = "" + GameManager.Instance.ArchitectQuantity;
     }
 }

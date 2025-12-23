@@ -4,26 +4,31 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 using System.Linq;
+using UnityEditor.PackageManager.Requests;
 
 public class Tile : MonoBehaviour
 {
     [Header("声明")]
     public piece ThisPiece;
+    public Team ThisTeam;
     public SpriteRenderer colorTile;
     public Collider2D TileCollider;
     public Collider2D AttPiece;
     private bool isCreatePieceUI=false;
     public bool CanMove;
     public bool CanAtt;
-    public bool isPiece=false;
+    public Collider2D isPiece;
     public LayerMask TileLayerMask;
     public LayerMask PieceLayerMask;
     [Header("Tile参数")]
+    public TileType ThisTileType;
     public GameObject heightLight;
     public Color CanMoveColor;
+    public GameObject TeamTile;
     [Header("事件广播")]
     public TileEventSO CreateUIEvent;
     [Header("事件监听")]
+    public VoidEventSO ResetPieceTeamTileEvent;
     public VoidEventSO OnCreatePieceUIEvent;
     public VoidEventSO OffCreatePieceUIEvent;
     private void Awake()
@@ -32,6 +37,7 @@ public class Tile : MonoBehaviour
     }
     private void OnEnable()
     {
+        ResetPieceTeamTileEvent.OnEvent += isTeamTile;
         OnCreatePieceUIEvent.OnEvent += CreatePieceUI;
         OffCreatePieceUIEvent.OnEvent += OffCreatePieceUI;
     }
@@ -39,6 +45,7 @@ public class Tile : MonoBehaviour
 
     private void OnDisable()
     {
+        ResetPieceTeamTileEvent.OnEvent -= isTeamTile;
         OnCreatePieceUIEvent.OnEvent -= CreatePieceUI;
         OffCreatePieceUIEvent.OnEvent -= OffCreatePieceUI;
     }
@@ -60,26 +67,30 @@ public class Tile : MonoBehaviour
     {
         SetPiece();
         isPiece = Physics2D.OverlapBox(transform.position, transform.localScale, 0, PieceLayerMask);
+        ShowTeamTile();
     }
 
+    //基本
+    #region
     public void SetPiece()
     {
-        if (!isPiece) {
-            if (!isCreatePieceUI)
+            if (!isPiece)
             {
-                Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                if (TileCollider.OverlapPoint(mousePos))
+                if (!isCreatePieceUI)
                 {
-                    if (Input.GetMouseButtonDown(1))
+                    Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    if (TileCollider.OverlapPoint(mousePos))
                     {
-                        CreateUIEvent.RaiseEvent(this);
-                        GameManager.Instance.OffShowMoveTile(); ;
-                        UiManager.Instance.OffPieceUI();
+                        if (Input.GetMouseButtonDown(1))
+                        {
+                            CreateUIEvent.RaiseEvent(this);
+                            GameManager.Instance.OffShowMoveTile(); ;
+                            UiManager.Instance.OffPieceUI();
 
+                        }
                     }
                 }
-            }
-        }
+            } 
     }
     private void CreatePieceUI()
     {
@@ -91,20 +102,27 @@ public class Tile : MonoBehaviour
     }
     public void Move()
     {
-        if (CanMove)
+        if (GameManager.Instance.ActionPoint)
         {
-            ThisPiece.tile = this;
-            GameManager.Instance.OffShowMoveTile();
-            UiManager.Instance.OffPieceUI();
-        }
+            if (CanMove)
+            {
+                ThisPiece.tile = this;
+                GameManager.Instance.ActionPoint = false;
+                GameManager.Instance.OffShowMoveTile();
+                UiManager.Instance.OffPieceUI();
+            }
+        }     
     }
     public void Att()
     {
         if (CanAtt)
         {
             ThisPiece.tile = this;
-            Destroy(AttPiece.gameObject);
-            GameManager.Instance.AddPieceQuantity(AttPiece);
+            if (AttPiece != null)
+            {
+                Destroy(AttPiece.gameObject);
+                GameManager.Instance.AddPieceQuantity(AttPiece);
+            }
             GameManager.Instance.OffShowMoveTile();
             UiManager.Instance.OffPieceUI();
         }
@@ -123,10 +141,10 @@ public class Tile : MonoBehaviour
     public void isCanAtt()
     {
         AttPiece = Physics2D.OverlapBox(transform.position, transform.localScale, 0, PieceLayerMask);
-        if (isPiece&&ThisPiece.team!=AttPiece.GetComponent<piece>().team)
+        if (isPiece&&ThisPiece.team!=AttPiece.GetComponent<piece>().team&&AttPiece.GetComponent<piece>().CanLook)
         {
-            CanAtt = true;
-            AttPiece.GetComponent<piece>().CanAtt = true;
+                CanAtt = true;
+                AttPiece.GetComponent<piece>().CanAtt = true;      
         }
         else
         {
@@ -229,5 +247,92 @@ public class Tile : MonoBehaviour
             }
         }
      
+    }
+    #endregion
+    //特殊Tile
+    public void ifTile(piece a)
+    {
+        switch (ThisTileType)
+        {
+            case TileType.Forest:
+                ForestTile(a);
+                break;
+            case TileType.Village:
+                VillageTile(a);
+                break;
+            case TileType.River:
+                RiverTile(a);
+                break;
+            case TileType.Tower:
+                TowerTile(a);
+                break;
+            case TileType.Tile:
+                Reset(a);
+                break;
+        }
+    }
+    public void ForestTile(piece a)
+    { 
+         a.CanLook = false;
+    }
+    public void VillageTile(piece a)
+    {
+        if (a.team==Team.bule)
+        {
+            GameManager.Instance.BuleVictoryPoint += 1;
+            if(GameManager.Instance.RedVictoryPoint>0)
+            GameManager.Instance.RedVictoryPoint -= 1;
+        }
+        else if (a.team == Team.red)
+        {
+            GameManager.Instance.RedVictoryPoint += 1;
+            if (GameManager.Instance.BuleVictoryPoint > 0)
+            GameManager.Instance.BuleVictoryPoint -= 1;
+        }
+    }
+    public void RiverTile(piece a)
+    {
+
+    }
+    public void TowerTile(piece a)
+    {
+
+    }
+    public void Reset(piece a)
+    {
+        a.CanLook = true;
+    }
+    //判断棋子阵营
+    public void isTeamTile()
+    {
+        if (isPiece != null)
+        {
+            if (isPiece.GetComponent<piece>().team == Team.bule)
+            {
+                TeamTile.GetComponent<SpriteRenderer>().sprite = UiManager.Instance.BuleTile;
+            }else if (isPiece.GetComponent<piece>().team == Team.red)
+            {
+                TeamTile.GetComponent<SpriteRenderer>().sprite = UiManager.Instance.RedTile;
+            }
+
+        }
+    }
+    public void ShowTeamTile()
+    {
+        if(isPiece != null)
+        {
+            if (isPiece.GetComponent<piece>().team ==GameManager.Instance.TeamRound)
+            {
+                TeamTile.SetActive(true);
+            }
+            else 
+            {
+                TeamTile.SetActive(false);
+            }
+        }
+        else
+        {
+            TeamTile.SetActive(false);
+        }
     }
 }
