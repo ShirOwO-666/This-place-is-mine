@@ -20,8 +20,6 @@ public class GameManager : MonoSingleton<GameManager>
     public bool ActionPoint=true;
     public int BuleVictoryPoint;
     public int RedVictoryPoint;
-    public int BuleVictory = 0;
-    public int RedVictory = 0;
     public PlayerData BulePlayerData;
     public PlayerData RedPlayerData;
     private PlayerData NowPlayerData;
@@ -43,6 +41,7 @@ public class GameManager : MonoSingleton<GameManager>
         EnemyPlayerData = RedPlayerData;
         UiManager.Instance.ResetPieceTeam();
     }
+
     public void SetPiece(int arg0)
     {
         if (ActionPoint)
@@ -162,7 +161,7 @@ public class GameManager : MonoSingleton<GameManager>
         UiManager.Instance.ResetPieceTeam();
         OffShowMoveTile();
         OffShowAttTile();
-        Victory();
+        AddVictoryPoint();
     }
     IEnumerator RoundOver()
     {
@@ -177,7 +176,7 @@ public class GameManager : MonoSingleton<GameManager>
             DataInput(Team.red);
             Round += 1;
         }
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.1f);
         if (TeamRound == Team.bule)
         {
             DataOutput(Team.bule);
@@ -271,24 +270,30 @@ public class GameManager : MonoSingleton<GameManager>
      
     }
     #endregion
+    public void AddVictoryPoint()
+    {
+        BuleVictoryPoint = 0;
+        RedVictoryPoint = 0;
+        foreach (var a in tiles)
+        {
+            if (a.ThisTeam == Team.bule && a.ThisTileType == TileType.Village)
+            {
+                BuleVictoryPoint += 1;
+            }else if (a.ThisTeam == Team.red && a.ThisTileType == TileType.Village)
+            {
+                RedVictoryPoint += 1;
+            }
+        }
+        Victory();
+    }
     public void Victory()
     {
-        if (BuleVictoryPoint == 3)
+        if (BuleVictoryPoint>=3)
         {
-            BuleVictory += 1;
-
-        }else if (RedVictoryPoint==3)
+            Debug.Log("bule");
+        }else if (RedVictoryPoint >= 3)
         {
-            RedVictory += 1;
-        }
-
-        if (BuleVictoryPoint != 3)
-        {
-            BuleVictory =0;
-        }
-        else if (RedVictoryPoint!=3)
-        {
-            RedVictory = 0;
+            Debug.Log("red");
         }
     }
 }

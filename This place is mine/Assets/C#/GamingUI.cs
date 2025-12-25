@@ -49,7 +49,7 @@ public class GamingUI : MonoBehaviour
     }
     public void Victory()
     {
-        switch (GameManager.Instance.BuleVictory)
+        switch (GameManager.Instance.BuleVictoryPoint)
         {
             case 0:
                 BuleVictoryPoint1.SetActive(false);
@@ -64,7 +64,7 @@ public class GamingUI : MonoBehaviour
                 BuleVictoryPoint2.SetActive(true);
                 break;
         }
-        switch (GameManager.Instance.RedVictory)
+        switch (GameManager.Instance.RedVictoryPoint)
         {
             case 0:
                 RedVictoryPoint1.SetActive(false);

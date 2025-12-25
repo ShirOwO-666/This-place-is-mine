@@ -63,6 +63,7 @@ public class piece : MonoBehaviour
         PieceAtt();
         if(tile!=null)
         ifTileType(tile);
+        ifCanLook();
     }
     private void OnMouseDown()
     {
@@ -78,12 +79,11 @@ public class piece : MonoBehaviour
                 UiManager.Instance.OffCreateUI();
             }          
         }
-        if (CanAtt)
-        {
-            ThisTile = Physics2D.OverlapBox(transform.position, transform.localScale, 0, TileLayerMask);
-            ThisTile.GetComponent<Tile>().Att();
-        }
-
+            if (CanAtt)
+            {
+                ThisTile = Physics2D.OverlapBox(transform.position, transform.localScale, 0, TileLayerMask);
+                ThisTile.GetComponent<Tile>().Att();
+            }
     }
     private void CreatePieceUI()
     {
@@ -164,10 +164,13 @@ public class piece : MonoBehaviour
     {
         if (pieceType != PieceType.Archer)
         {
-            if (isAtt && tile != null)
+            if (isAtt )
             {
-                tile.GetComponent<Tile>().TeamTile.GetComponent<SpriteRenderer>().sprite = UiManager.Instance.GreenTile;
-                transform.position = Vector3.MoveTowards(transform.position, tile.transform.position, Speed * Time.deltaTime);
+                if ( tile != null)
+                {
+                    tile.GetComponent<Tile>().TeamTile.GetComponent<SpriteRenderer>().sprite = UiManager.Instance.GreenTile;
+                    transform.position = Vector3.MoveTowards(transform.position, tile.transform.position, Speed * Time.deltaTime);
+                }
             }
         }
         else
@@ -196,6 +199,33 @@ public class piece : MonoBehaviour
     {
         tile.ifTile(this);
     }
-
-
+    //战车进攻逻辑
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (GameManager.Instance.TeamRound==team)
+        {
+            if (pieceType == PieceType.Chariot)
+            {
+                if (collision.gameObject.tag == "Piece")
+                {
+                    if (collision.GetComponent<piece>().team != team)
+                    {
+                        Destroy(collision.gameObject);
+                    }
+                }
+            }
+        }   
+    }
+    //自身判断是否有视野
+    public void ifCanLook()
+    {
+        if (CanLook)
+        {
+            gameObject.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 1f);
+        }
+        else
+        {
+            gameObject.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 0.5f);
+        }
+    }
 }

@@ -6,10 +6,13 @@ using UnityEngine.UI;
 
 public class UiManager : MonoSingleton<UiManager>
 {
+    public GameObject PauseUI;
+    public GameObject VictoryUI;
     [Header("Æå×ÓÕóÈÝUI")]
     public Sprite BuleTile;
     public Sprite RedTile;
     public Sprite GreenTile;
+
     [Header("²¿ÊðUI")]
     public GameObject CreateUI;
     public GameObject PieceCanvas;
@@ -40,7 +43,6 @@ public class UiManager : MonoSingleton<UiManager>
     public GameObject BirdPieceUI;
     public GameObject InfantryPieceUI;
     public GameObject KnightPieceUI;
-    public GameObject ArchitectPieceUI;
     public TextMeshProUGUI CavalryPieceCounterUI;
     public TextMeshProUGUI ArcherPieceCounterUI;
     public TextMeshProUGUI ChariotPieceCounterUI;
@@ -83,6 +85,7 @@ public class UiManager : MonoSingleton<UiManager>
         CanCreatePiece();
         isActionPoint();
         SetCounterUI();
+        Pause();
     }
     public void isActionPoint()
     {
@@ -154,10 +157,18 @@ public class UiManager : MonoSingleton<UiManager>
     {
         UIAngle1 = Mathf.PI / 2;
         UIAngle2 = Mathf.PI / 2;
+        if (piece.pieceType!=PieceType.Chariot)
+        {
+            Att.SetActive(true);
+            Move.SetActive(true);
+            CancelPieceUI.SetActive(true);
+        }
+        else
+        {
+            Move.SetActive(true);
+            CancelPieceUI.SetActive(true);
+        }
 
-        Att.SetActive(true);
-        Move.SetActive(true);
-        CancelPieceUI.SetActive(true);
         Center = piece.transform.position;
         PieceUI.transform.localPosition = Center + new Vector3(0, radius, 0);
         isCheakPiece = true;
@@ -243,14 +254,7 @@ public class UiManager : MonoSingleton<UiManager>
         {
            KnightPieceUI.GetComponent<Button>().interactable = true;
         }
-        if (GameManager.Instance.ArchitectQuantity <= 0)
-        {
-            ArchitectPieceUI.GetComponent<Button>().interactable = false;
-        }
-        else
-        {
-            ArchitectPieceUI.GetComponent<Button>().interactable = true;
-        }
+    
     }
     public void ResetPieceTeam()
     {
@@ -264,6 +268,17 @@ public class UiManager : MonoSingleton<UiManager>
         BirdPieceCounterUI.text = "" + GameManager.Instance.BirdQuantity;
         InfantryPieceCounterUI.text = "" + GameManager.Instance.InfantryQuantity;
         KnightPieceCounterUI.text = "" + GameManager.Instance.KnightQuantity;
-        ArchitectPieceCounterUI.text = "" + GameManager.Instance.ArchitectQuantity;
+    }
+
+    public void Pause()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            PauseUI.SetActive(true);
+        }
+    }
+    public void Victory()
+    {
+            VictoryUI.SetActive(true);
     }
 }

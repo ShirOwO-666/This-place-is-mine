@@ -7,6 +7,7 @@ using System.Linq;
 using UnityEditor.PackageManager.Requests;
 using UnityEngine.Rendering;
 using System.Security.Cryptography;
+using Unity.VisualScripting;
 
 public class Tile : MonoBehaviour
 {
@@ -123,7 +124,6 @@ public class Tile : MonoBehaviour
             if (AttPiece != null)
             {
                 Destroy(AttPiece.gameObject);
-                GameManager.Instance.AddPieceQuantity(AttPiece);
             }
             GameManager.Instance.OffShowMoveTile();
             UiManager.Instance.OffPieceUI();
@@ -143,15 +143,29 @@ public class Tile : MonoBehaviour
     public void isCanAtt()
     {
         AttPiece = Physics2D.OverlapBox(transform.position, transform.localScale, 0, PieceLayerMask);
-        if (isPiece&&ThisPiece.team!=AttPiece.GetComponent<piece>().team&&AttPiece.GetComponent<piece>().CanLook)
+        if (ThisPiece.pieceType!=PieceType.Bird)
         {
+            if (isPiece && ThisPiece.team != AttPiece.GetComponent<piece>().team && AttPiece.GetComponent<piece>().CanLook)
+            {
                 CanAtt = true;
-                AttPiece.GetComponent<piece>().CanAtt = true;      
+                AttPiece.GetComponent<piece>().CanAtt = true;
+            }
+            else
+            {
+                CanAtt = false;
+            }
+            Debug.Log(0);
         }
-        else
+        else if(ThisPiece.pieceType == PieceType.Bird)
         {
-            CanAtt = false;
+            if (isPiece && ThisPiece.team != AttPiece.GetComponent<piece>().team)
+            {
+                CanAtt = true;
+                AttPiece.GetComponent<piece>().CanAtt = true;
+            }
+            Debug.Log(1);
         }
+        
     }
     public void CanMoveTile()
     {
@@ -343,29 +357,27 @@ public class Tile : MonoBehaviour
     {
         if (a.team==Team.bule)
         {
-            GameManager.Instance.BuleVictoryPoint += 1;
-            if(GameManager.Instance.RedVictoryPoint>0)
-            GameManager.Instance.RedVictoryPoint -= 1;
+            ThisTeam = Team.bule;
         }
         else if (a.team == Team.red)
         {
-            GameManager.Instance.RedVictoryPoint += 1;
-            if (GameManager.Instance.BuleVictoryPoint > 0)
-            GameManager.Instance.BuleVictoryPoint -= 1;
+            ThisTeam = Team.red;
         }
     }
     public void ifRiverTile()
     {
         if (ThisTileType == TileType.River)
         {
-            if (ThisPiece.pieceType != PieceType.Bird || ThisPiece.pieceType != PieceType.Chariot)
+            if (ThisPiece.pieceType == PieceType.Bird || ThisPiece.pieceType == PieceType.Chariot)
+            {
+                CanMove = true;
+            }
+            else
+            {
                 CanMove = false;
+            }
         }
       
-    }
-    public void TowerTile(piece a)
-    {
-     
     }
     public void Reset(piece a)
     {
