@@ -5,6 +5,8 @@ using Unity.Mathematics;
 using UnityEngine;
 using System.Linq;
 using UnityEditor.PackageManager.Requests;
+using UnityEngine.Rendering;
+using System.Security.Cryptography;
 
 public class Tile : MonoBehaviour
 {
@@ -162,14 +164,15 @@ public class Tile : MonoBehaviour
     {    
             colorTile.color = CanMoveColor;
     }
-    public void CreateMoveDirection(float Range,piece piece,bool restrict)
+    public void CreateMoveDirection(float Range, piece piece, bool restrict)
     {
-        Collider2D[] s = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, Range * GameManager.Instance.TileSize * Mathf.Sqrt(3) ), 30, TileLayerMask);
-        Collider2D[] q = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, Range * GameManager.Instance.TileSize * Mathf.Sqrt(3) ), -30, TileLayerMask);
-        Collider2D[] r = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, Range * GameManager.Instance.TileSize * Mathf.Sqrt(3) ), 90, TileLayerMask);
-        Collider2D[] s0 = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, (Range-1) * GameManager.Instance.TileSize * Mathf.Sqrt(3)), 30, TileLayerMask);
-        Collider2D[] q0 = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, (Range-1) * GameManager.Instance.TileSize * Mathf.Sqrt(3)), -30, TileLayerMask);
-        Collider2D[] r0 = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, (Range-1) * GameManager.Instance.TileSize * Mathf.Sqrt(3)), 90, TileLayerMask);
+
+        Collider2D[] s = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, Range * GameManager.Instance.TileSize * Mathf.Sqrt(3)), 30, TileLayerMask);
+        Collider2D[] q = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, Range * GameManager.Instance.TileSize * Mathf.Sqrt(3)), -30, TileLayerMask);
+        Collider2D[] r = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, Range * GameManager.Instance.TileSize * Mathf.Sqrt(3)), 90, TileLayerMask);
+        Collider2D[] s0 = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, (Range - 1) * GameManager.Instance.TileSize * Mathf.Sqrt(3)), 30, TileLayerMask);
+        Collider2D[] q0 = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, (Range - 1) * GameManager.Instance.TileSize * Mathf.Sqrt(3)), -30, TileLayerMask);
+        Collider2D[] r0 = Physics2D.OverlapBoxAll(transform.position, new Vector2(0.5f, (Range - 1) * GameManager.Instance.TileSize * Mathf.Sqrt(3)), 90, TileLayerMask);
         if (restrict)
         {
             s = s.Except(s0).ToArray();
@@ -179,22 +182,24 @@ public class Tile : MonoBehaviour
             {
                 s[i].GetComponent<Tile>().ThisPiece = piece;
                 s[i].GetComponent<Tile>().isCanMove();
+                s[i].GetComponent<Tile>().ifRiverTile();
                 s[i].GetComponent<Tile>().CanMoveTile();
             }
             for (int i = 0; i < q.Length; i++)
             {
                 q[i].GetComponent<Tile>().ThisPiece = piece;
                 q[i].GetComponent<Tile>().isCanMove();
+                q[i].GetComponent<Tile>().ifRiverTile();
                 q[i].GetComponent<Tile>().CanMoveTile();
             }
             for (int i = 0; i < r.Length; i++)
             {
                 r[i].GetComponent<Tile>().ThisPiece = piece;
                 r[i].GetComponent<Tile>().isCanMove();
+                r[i].GetComponent<Tile>().ifRiverTile();
                 r[i].GetComponent<Tile>().CanMoveTile();
             }
-            CanMove = true;
-            CanMoveTile();
+     
         }
         else
         {
@@ -202,22 +207,83 @@ public class Tile : MonoBehaviour
             {
                 s[i].GetComponent<Tile>().ThisPiece = piece;
                 s[i].GetComponent<Tile>().isCanMove();
+                s[i].GetComponent<Tile>().ifRiverTile();
                 s[i].GetComponent<Tile>().CanMoveTile();
             }
             for (int i = 0; i < q.Length; i++)
             {
                 q[i].GetComponent<Tile>().ThisPiece = piece;
                 q[i].GetComponent<Tile>().isCanMove();
+                q[i].GetComponent<Tile>().ifRiverTile();
                 q[i].GetComponent<Tile>().CanMoveTile();
             }
             for (int i = 0; i < r.Length; i++)
             {
                 r[i].GetComponent<Tile>().ThisPiece = piece;
                 r[i].GetComponent<Tile>().isCanMove();
+                r[i].GetComponent<Tile>().ifRiverTile();
                 r[i].GetComponent<Tile>().CanMoveTile();
             }
         }
+        CanMove = true;
+        CanMoveTile();
     }
+    //public void ConvertCollider2DCreateMoveDirection(RaycastHit2D[] a ,piece piece)
+    //{
+    //    Collider2D[] colliders = new Collider2D[a.Length];
+    //    for (int i = 0; i < a.Length; i++)
+    //    {
+    //        colliders[i] =a[i].collider;
+    //    }
+    //    foreach (Collider2D col in colliders)
+    //    {
+    //        if (col != null)
+    //        {
+    //            col.GetComponent<Tile>().ThisPiece = piece;
+    //            col.GetComponent<Tile>().isCanMove();
+    //            col.GetComponent<Tile>().CanMoveTile();
+    //        }
+    //    }
+    //}
+    //public RaycastHit2D[] ExceptRange(RaycastHit2D[] a, float Range,Vector2 vector2)
+    //{
+    //    RaycastHit2D[] a0 = Physics2D.RaycastAll(transform.position, vector2, (Range-1f) * GameManager.Instance.TileSize * Mathf.Sqrt(3) / 2, TileLayerMask.value);
+    //    a = a.Except(a0).ToArray();
+    //    return a;
+    //}
+    //public void CreateMoveDirection(float Range, piece piece, bool restrict)
+    //{
+    //    RaycastHit2D[] s1 = Physics2D.RaycastAll(transform.position, new Vector2(-1, Mathf.Sqrt(3)), Range * GameManager.Instance.TileSize * Mathf.Sqrt(3) / 2, TileLayerMask.value);
+    //    RaycastHit2D[] q1 = Physics2D.RaycastAll(transform.position, new Vector2(1, Mathf.Sqrt(3)), Range * GameManager.Instance.TileSize * Mathf.Sqrt(3) / 2, TileLayerMask.value);
+    //    RaycastHit2D[] r1 = Physics2D.RaycastAll(transform.position, new Vector2(-1, 0), Range * GameManager.Instance.TileSize * Mathf.Sqrt(3) / 2, TileLayerMask.value);
+    //    RaycastHit2D[] s2 = Physics2D.RaycastAll(transform.position, new Vector2(1, -Mathf.Sqrt(3)), Range * GameManager.Instance.TileSize * Mathf.Sqrt(3) / 2, TileLayerMask.value);
+    //    RaycastHit2D[] q2 = Physics2D.RaycastAll(transform.position, new Vector2(-1, -Mathf.Sqrt(3)), Range * GameManager.Instance.TileSize * Mathf.Sqrt(3) / 2, TileLayerMask.value);
+    //    RaycastHit2D[] r2 = Physics2D.RaycastAll(transform.position, new Vector2(1, 0), Range * GameManager.Instance.TileSize * Mathf.Sqrt(3) / 2, TileLayerMask.value);
+
+    //    if (restrict)
+    //    {
+    //        s1 = ExceptRange(s1, Range , new Vector2(-1, Mathf.Sqrt(3)));
+    //        q1 = ExceptRange(q1, Range , new Vector2(1, Mathf.Sqrt(3)));
+    //        r1 = ExceptRange(r1, Range , new Vector2(-1,0));
+    //        s2 = ExceptRange(s2, Range, new Vector2(1, -Mathf.Sqrt(3)));
+    //        q2 = ExceptRange(q2, Range, new Vector2(-1, -Mathf.Sqrt(3)));
+    //        r2 = ExceptRange(r2, Range, new Vector2(1,0));
+    //    }
+  
+    //    ConvertCollider2DCreateMoveDirection(s1,piece);
+    //    ConvertCollider2DCreateMoveDirection(s2, piece);
+    //    ConvertCollider2DCreateMoveDirection(q1, piece);
+    //    ConvertCollider2DCreateMoveDirection(q2, piece);
+    //    ConvertCollider2DCreateMoveDirection(r1, piece);
+    //    ConvertCollider2DCreateMoveDirection(r2, piece);
+
+    //    //s = s.Except(s0).ToArray();
+    //    //q = q.Except(q0).ToArray();
+    //    //r = r.Except(r0).ToArray();
+
+    //    CanMove = true;
+    //        CanMoveTile();
+    //}
     public void CreateAttDirection(float Range, piece piece, bool restrict)
     {  
             for (int i = 0; i < GameManager.Instance.tiles.Count; i++)
@@ -261,10 +327,8 @@ public class Tile : MonoBehaviour
                 VillageTile(a);
                 break;
             case TileType.River:
-                RiverTile(a);
                 break;
             case TileType.Tower:
-                TowerTile(a);
                 break;
             case TileType.Tile:
                 Reset(a);
@@ -290,13 +354,18 @@ public class Tile : MonoBehaviour
             GameManager.Instance.BuleVictoryPoint -= 1;
         }
     }
-    public void RiverTile(piece a)
+    public void ifRiverTile()
     {
-
+        if (ThisTileType == TileType.River)
+        {
+            if (ThisPiece.pieceType != PieceType.Bird || ThisPiece.pieceType != PieceType.Chariot)
+                CanMove = false;
+        }
+      
     }
     public void TowerTile(piece a)
     {
-
+     
     }
     public void Reset(piece a)
     {

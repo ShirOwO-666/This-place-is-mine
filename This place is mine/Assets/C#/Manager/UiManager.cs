@@ -33,6 +33,7 @@ public class UiManager : MonoSingleton<UiManager>
     public Vector3 Center = Vector3.zero;//旋转中心
 
     [Header("部署棋子UI")]
+    public bool isCheakPiece=false;//棋子被选中
     public GameObject CavalryPieceUI;
     public GameObject ArcherPieceUI;
     public GameObject ChariotPieceUI;
@@ -159,12 +160,14 @@ public class UiManager : MonoSingleton<UiManager>
         CancelPieceUI.SetActive(true);
         Center = piece.transform.position;
         PieceUI.transform.localPosition = Center + new Vector3(0, radius, 0);
+        isCheakPiece = true;
     }
     public void OffPieceUI()
     {
         Att.SetActive(false);
         Move.SetActive(false);
         CancelPieceUI.SetActive(false);
+        isCheakPiece = false;
     }
 
     public void SetPieceUI()

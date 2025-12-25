@@ -68,7 +68,7 @@ public class piece : MonoBehaviour
     {
         if (team==GameManager.Instance.TeamRound)
         {
-            if (!isCreatePieceUI)
+            if (!isCreatePieceUI&&!UiManager.Instance.isCheakPiece)
             {
                 OnPieceUI.RaiseEvent(this);
                 ThisTile = Physics2D.OverlapBox(transform.position, transform.localScale, 0, TileLayerMask);
